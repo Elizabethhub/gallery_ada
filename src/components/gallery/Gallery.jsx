@@ -5,6 +5,7 @@ import ImageCard from "../ImageCard";
 import GalleryPagination from "./GalleryPagination";
 import GallerySearch from "./GallerySearch";
 import GalleryColumnsToggle from "./GalleryColumnsToggle";
+import Collection from "../Collection";
 
 const Gallery = () => {
   const { tag } = useParams();
@@ -14,7 +15,8 @@ const Gallery = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-
+  const [collectionImages, setCollectionImages] = useState([]);
+  console.log("collectionImages", collectionImages);
   useEffect(() => {
     fetchPhotos(page, searchQuery, tag);
   }, [page, searchQuery, tag]);
@@ -38,6 +40,15 @@ const Gallery = () => {
     }
   };
 
+  const handleAddToCollection = (photo) => {
+    setCollectionImages([...collectionImages, photo]);
+  };
+
+  const handleRemoveFromCollection = (photoId) => {
+    const updatedCollection = collectionImages.filter((photo) => photo.id !== photoId);
+    setCollectionImages(updatedCollection);
+  };
+
   const handlePageChange = (newPage) => {
     setPage(newPage);
   };
@@ -48,11 +59,20 @@ const Gallery = () => {
       <GalleryColumnsToggle columns={columns} setColumns={setColumns} />
       <div className="gallery" style={{ columnCount: columns }}>
         {photos.map((photo) => (
-          <ImageCard key={photo.id} photo={photo} />
+          <ImageCard
+            key={photo.id}
+            photo={photo}
+            onAddToCollection={handleAddToCollection}
+            onRemoveFromCollection={handleRemoveFromCollection}
+          />
         ))}
       </div>
       {loading && <p>Loading...</p>}
       <GalleryPagination page={page} totalPages={totalPages} handlePageChange={handlePageChange} />
+      <div style={{ columnCount: columns }}>
+        <h2>Collection</h2>
+        <Collection images={collectionImages} onRemoveFromCollection={handleRemoveFromCollection} />
+      </div>
     </div>
   );
 };

@@ -12,9 +12,15 @@ const GallerySearch = ({ setSearchQuery }) => {
     setSearchQuery(searchInput);
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
   return (
     <div>
-      <input type="text" value={searchInput} onChange={handleSearchInput} placeholder="Enter search query" />
+      <input type="text" value={searchInput} onChange={handleSearchInput} onKeyDown={handleKeyPress} placeholder="Enter search query" />
       <button onClick={handleSearch}>Search</button>
     </div>
   );
